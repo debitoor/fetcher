@@ -70,7 +70,7 @@ function withoutNulls(obj) {
 
 function checkResponseStatus(response, ErrorHandler) {
 	if (response.status >= 200 && response.status < 300) {
-		return response;
+		return;
 	}
 
 	throw new ErrorHandler(response);
