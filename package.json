@@ -9,6 +9,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@debitoor/mocha-strict-dependencies": "1.1.0",
+    "mocha": "6.0.2",
     "node-fetch": "2.3.0"
+  },
+  "devDependencies": {
+    "@debitoor/eslint-config-debitoor": "3.0.1",
+    "@types/mocha": "5.2.6",
+    "eslint": "5.15.0",
+    "mocha-eslint": "5.0.0"
   }
 }

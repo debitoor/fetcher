@@ -16,7 +16,7 @@ class Fetcher {
 		const init = { method, headers };
 
 		if (body) {
-			init.body = typeof body === object
+			init.body = typeof body === 'object'
 				? JSON.stringify(body)
 				: body;
 		}
@@ -30,14 +30,21 @@ class Fetcher {
 
 async function parseResponseBody(response) {
 	const isJson = (response.headers.get('Content-Type') || '').startsWith('application/json');
+	const isText = (response.headers.get('Content-Type') || '').startsWith('text/');
 
-	if (!isJson) {
+	if (!isJson || !isText) {
 		return response;
 	}
 
 	try {
-		const body = await response.json();
-		response.parsedBody = body;
+		if (isJson) {
+			const body = await response.json();
+			response.parsedBody = body;
+		}
+		if (isText) {
+			const text = await response.text();
+			response.parsedText = text;
+		}
 	} catch (error) {
 		response.error = error;
 	}
@@ -77,7 +84,7 @@ module.exports.Fetcher = Fetcher;
 
 class DefaultFetchError extends Error {
 	constructor(response) {
-		const message = response.statusText || response.message || 'unexpected error'
+		const message = response.statusText || response.message || 'unexpected error';
 		super(message);
 		this.response = response;
 	}

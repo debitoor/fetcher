@@ -9,6 +9,10 @@ export type FetchOpts = {
 };
 
 export class Fetcher {
-	constructor(baseUrl: string, FetchError: any | Error);
+	constructor(baseUrl: string, FetchError: any | Error);
+
+	baseUrl: string;
+	FetchError: Error | any;
+
 	fetch({ method, path, headers, body, query }: FetchOpts): Promise<Response>;
 }
