@@ -22,9 +22,14 @@ class Fetcher {
 		}
 
 		const response = await fetch(url, init);
-		const parsedResponseBody = await parseResponseBody(response);
-		checkResponseStatus(parsedResponseBody, this.FetchError);
-		return returnParsedResponseBody(parsedResponseBody);
+		const parsedResponse = await parseResponseBody(response);
+		const validResponseStatus = validateResponseStatus(parsedResponse);
+
+		if (!validResponseStatus) {
+			throw new this.FetchError(parsedResponse);
+		}
+
+		return returnParsedResponse(parsedResponse);
 	}
 }
 
@@ -68,16 +73,16 @@ function withoutNulls(obj) {
 	}, {});
 }
 
-function checkResponseStatus(response, ErrorHandler) {
+function validateResponseStatus(response) {
 	if (response.status >= 200 && response.status < 300) {
-		return;
+		return true;
 	}
 
-	throw new ErrorHandler(response);
+	return false;
 }
 
-function returnParsedResponseBody(response) {
-	return response.parsedBody || response;
+function returnParsedResponse(response) {
+	return response.parsedBody || response.parsedText || response;
 }
 
 module.exports.Fetcher = Fetcher;

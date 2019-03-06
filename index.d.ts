@@ -8,11 +8,13 @@ export type FetchOpts = {
 	query?: any;
 };
 
+type ParsedResponse = any | Response;
+
 export class Fetcher {
 	constructor(baseUrl: string, FetchError: any | Error);
 
 	baseUrl: string;
 	FetchError: Error | any;
 
-	fetch({ method, path, headers, body, query }: FetchOpts): Promise<Response>;
+	fetch({ method, path, headers, body, query }: FetchOpts): Promise<ParsedResponse>;
 }
