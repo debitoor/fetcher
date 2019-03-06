@@ -23,7 +23,6 @@ class Fetcher {
 
 		const response = await fetch(url, init);
 		const parsedResponse = await parseResponseBody(response);
-
 		const validResponseStatus = validateResponseStatus(parsedResponse);
 
 		if (!validResponseStatus) {
