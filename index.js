@@ -22,15 +22,15 @@ class Fetcher {
 		}
 
 		const response = await fetch(url, init);
-		const parsedResponseBody = await parseResponseBody(response);
+		const parsedResponse = await parseResponseBody(response);
 
-		const validResponseStatus = validateResponseStatus(parsedResponseBody);
+		const validResponseStatus = validateResponseStatus(parsedResponse);
 
 		if (!validResponseStatus) {
-			throw new this.FetchError(parsedResponseBody);
+			throw new this.FetchError(parsedResponse);
 		}
 
-		return returnParsedResponseBody(parsedResponseBody);
+		return returnParsedResponse(parsedResponse);
 	}
 }
 
@@ -82,8 +82,8 @@ function validateResponseStatus(response) {
 	return false;
 }
 
-function returnParsedResponseBody(response) {
-	return response.parsedBody || response;
+function returnParsedResponse(response) {
+	return response.parsedBody || response.parsedText || response;
 }
 
 module.exports.Fetcher = Fetcher;
