@@ -23,7 +23,13 @@ class Fetcher {
 
 		const response = await fetch(url, init);
 		const parsedResponseBody = await parseResponseBody(response);
-		checkResponseStatus(parsedResponseBody, this.FetchError);
+
+		const validResponseStatus = validateResponseStatus(parsedResponseBody);
+
+		if (!validResponseStatus) {
+			throw new this.FetchError(parsedResponseBody);
+		}
+
 		return returnParsedResponseBody(parsedResponseBody);
 	}
 }
@@ -68,12 +74,12 @@ function withoutNulls(obj) {
 	}, {});
 }
 
-function checkResponseStatus(response, ErrorHandler) {
+function validateResponseStatus(response) {
 	if (response.status >= 200 && response.status < 300) {
-		return;
+		return true;
 	}
 
-	throw new ErrorHandler(response);
+	return false;
 }
 
 function returnParsedResponseBody(response) {
