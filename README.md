@@ -6,7 +6,7 @@ If response is of `"content-type": "application/json"` it will return the respon
 
 If response is of `"content-type": "text/` it will return the response of `await response.text()`.
 
-If response is not of either type, it will instead return the response as is.
+If response is not of either type, it will just return the response as is.
 
 The Fetcher takes a `baseUrl` and an optional `FetchError`. If the optional `FetchError` is not provided, it will instead use a default `DefaultFetchError` in case of request errors.
 
