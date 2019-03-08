@@ -1,6 +1,16 @@
 # Fetcher
 
-Module adding additional checks to the response of a request made with node-fetch.
+An extended node-fetcher module that helps you avoid repeating response status checks, but instead delivers what you are usually interested in - the response.
+
+If response is of `"content-type": "application/json"` it will return the response of `await response.json();`.
+
+If response is of `"content-type": "text/` it will return the response of `await response.text()`.
+
+If response is not of either type, it will instead return the response as is.
+
+The Fetcher takes a `baseUrl` and an optional `FetchError`. If the optional `FetchError` is not provided, it will instead use a default `DefaultFetchError` in case of request errors.
+
+It will throw either the provided `FetchError` or `DefaultFetchError` if `response.status` is not equal to 200 or less than 300 (`response.status >= 200 && response.status < 300`).
 
 ## examples
 
