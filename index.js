@@ -37,7 +37,7 @@ async function parseResponseBody(response) {
 	const isJson = (response.headers.get('Content-Type') || '').startsWith('application/json');
 	const isText = (response.headers.get('Content-Type') || '').startsWith('text/');
 
-	if (!isJson || !isText) {
+	if (!isJson && !isText) {
 		return response;
 	}
 
@@ -85,7 +85,7 @@ function returnParsedResponse(response) {
 	return response.parsedBody || response.parsedText || response;
 }
 
-module.exports.Fetcher = Fetcher;
+module.exports = { Fetcher };
 
 class DefaultFetchError extends Error {
 	constructor(response) {
