@@ -16,7 +16,7 @@ It will throw either the provided `FetchError` or `DefaultFetchError` if `respon
 
 ## examples
 
-_Note_ how **Both** examples providing `ExampleError` for optional param `FetchError`:
+_Note_ how **Both** examples provides `ExampleError` for optional param `FetchError`:
 
 ```javascript
 
