@@ -1,22 +1,24 @@
 {
-  "name": "fetcher",
+  "name": "@debitoor/fetcher",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
-  "author": "",
+  "author": "Debitoor",
   "license": "ISC",
   "dependencies": {
-    "@debitoor/mocha-strict-dependencies": "1.1.0",
-    "mocha": "6.0.2",
     "node-fetch": "2.3.0"
   },
   "devDependencies": {
     "@debitoor/eslint-config-debitoor": "3.0.1",
+    "@debitoor/mocha-strict-dependencies": "1.1.0",
     "@types/mocha": "5.2.6",
+    "@types/node": "11.10.5",
+    "chai-as-promised": "7.1.1",
     "eslint": "5.15.0",
+    "mocha": "6.0.2",
     "mocha-eslint": "5.0.0"
   }
 }

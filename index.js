@@ -7,7 +7,7 @@ class Fetcher {
 		this.FetchError = FetchError || DefaultFetchError;
 	}
 
-	async fetch({ method, path, query = null, headers = {}, body = null }) {
+	async fetch({ method = 'GET', path, query = null, headers = {}, body = null }) {
 		const url = formatUrl({
 			pathname: `${this.baseUrl}${path}`,
 			query: withoutNulls(query)
@@ -37,7 +37,7 @@ async function parseResponseBody(response) {
 	const isJson = (response.headers.get('Content-Type') || '').startsWith('application/json');
 	const isText = (response.headers.get('Content-Type') || '').startsWith('text/');
 
-	if (!isJson || !isText) {
+	if (!isJson && !isText) {
 		return response;
 	}
 
@@ -85,8 +85,6 @@ function returnParsedResponse(response) {
 	return response.parsedBody || response.parsedText || response;
 }
 
-module.exports.Fetcher = Fetcher;
-
 class DefaultFetchError extends Error {
 	constructor(response) {
 		const message = response.statusText || response.message || 'unexpected error';
@@ -94,3 +92,8 @@ class DefaultFetchError extends Error {
 		this.response = response;
 	}
 }
+
+module.exports = {
+	Fetcher,
+	DefaultFetchError
+};

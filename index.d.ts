@@ -1,8 +1,8 @@
 import { Response } from 'node-fetch';
 
 export type FetchOpts = {
-	method: string;
 	path: string;
+	method?: string;
 	headers?: any;
 	body?: any;
 	query?: any;

@@ -1,4 +1,3 @@
 --exit
-./test/**/*.spec.js
+./test/*.spec.js
 --timeout 2000
---require ./test/globals.js
