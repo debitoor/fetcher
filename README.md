@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/debitoor/fetcher/tree/master.svg?style=svg)](https://circleci.com/gh/debitoor/fetcher/tree/master)
+
 # Fetcher
 
 An extended node-fetcher module that helps you avoid repeating response status checks, but instead delivers what you are usually interested in - the response.
