@@ -2,7 +2,7 @@
 
 # Fetcher
 
-An extended node-fetcher module that helps you avoid repeating response status checks, but instead delivers what you are usually interested in - the response.
+An extended node-fetch module that helps you avoid repeating response status checks, but instead delivers what you are usually interested in - the response.
 
 If response is of `"content-type": "application/json"` it will return the response of `await response.json();`.
 
