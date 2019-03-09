@@ -16,16 +16,23 @@ It will throw either the provided `FetchError` or `DefaultFetchError` if `respon
 
 ## examples
 
-### New instance
+_Note_ how **Both** examples providing `ExampleError` for optional param `FetchError`:
 
 ```javascript
+
+// example error
+class ExampleError extends Error {
+	constructor(response) {
+		super(response.statusText);
+		this.response = response;
+	}
+}
+
+// create new instance
 const fetcher = new Fetcher(baseUrl, ExampleError);
 const response = await fetcher.fetch({ method:'GET' path: '/foo/bar' });
-```
 
-### Extend class
-
-```javascript
+// extend class
 class Example extends Fetcher {
 	constructor(baseUrl) {
 		super(baseUrl, ExampleError);
@@ -33,17 +40,6 @@ class Example extends Fetcher {
 
 	async requestMethod() {
 		return this.fetch({ method: 'GET', path: '/foo/bar' });
-	}
-}
-```
-
-**Both** examples providing `ExampleError` for optional param `FetchError`:
-
-```javascript
-class ExampleError extends Error {
-	constructor(response) {
-		super(response.statusText);
-		this.response = response;
 	}
 }
 ```
