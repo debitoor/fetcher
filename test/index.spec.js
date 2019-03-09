@@ -1,4 +1,4 @@
-const { Fetcher } = require('../index');
+const { Fetcher, DefaultFetchError } = require('../index');
 const http = require('http');
 const { expect } = require('chai');
 
@@ -17,6 +17,9 @@ describe('index', () => {
 					res.setHeader('Content-Type', 'text/html');
 					res.write('<body><h1>Hello world</h1></body>');
 					break;
+				case '/303':
+					res.statusCode = 303;
+					break;
 				default:
 					res.write('hello world');
 			}
@@ -24,10 +27,12 @@ describe('index', () => {
 		}).listen(PORT, () => done());
 	});
 	describe('when new instance', () => {
+		let fetcher;
+		before(() => {
+			fetcher = new Fetcher(BASE_URL);
+		});
 		describe('when response is content-type application/json', () => {
 			it('should return as json', async () => {
-				const fetcher = new Fetcher(BASE_URL);
-
 				const actual = await fetcher.fetch({ method: 'GET', path: '/json' });
 				const expected = { message: 'json' };
 
@@ -36,8 +41,6 @@ describe('index', () => {
 		});
 		describe('when response is content-type starts with text/', () => {
 			it('should return text', async () => {
-				const fetcher = new Fetcher(BASE_URL);
-
 				const actual = await fetcher.fetch({ method: 'GET', path: '/text' });
 				const expected = '<body><h1>Hello world</h1></body>';
 
@@ -46,8 +49,6 @@ describe('index', () => {
 		});
 		describe('when response does not include json og text header(s)', () => {
 			it('should return a default fetch response', async () => {
-				const fetcher = new Fetcher(BASE_URL);
-
 				const res = await fetcher.fetch({ method: 'GET', path: '/unsupported' });
 
 				const actual = await res.text();
@@ -56,6 +57,26 @@ describe('index', () => {
 				expect(actual).to.equal(expected);
 			});
 		});
+		describe('when response returns status 303 and no FetcherError provide', () => {
+			it('should throw an error and error should be an instance DefaultFetchError', async () => {
+				try {
+					await fetcher.fetch({ path: '/303' });
+				} catch (error) {
+					expect(error).to.be.an.instanceOf(DefaultFetchError);
+				}
+			});
+		});
+		describe('when response returns status 303 and custom FetcherError is provided', () => {
+			it('should throw an error and error should be an instance of CustomFetchError', async () => {
+				const fetcherWithError = new Fetcher(BASE_URL, CustomFetchError);
+				try {
+					await fetcherWithError.fetch({ path: '/303' });
+				} catch (error) {
+					expect(error).to.be.an.instanceOf(CustomFetchError);
+				}
+			});
+		});
+
 	});
 	describe('when extending class', () => {
 		let caller;
@@ -79,3 +100,10 @@ describe('index', () => {
 		});
 	});
 });
+
+class CustomFetchError extends Error {
+	constructor(response) {
+		super('Custom fetch error');
+		this.response = response;
+	}
+}
