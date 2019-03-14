@@ -19,7 +19,7 @@ class Fetcher {
 			init.body = typeof body === 'object'
 				? JSON.stringify(body)
 				: body;
-			init.headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+			init.headers['Content-Type'] = init.headers['Content-Type'] || 'application/json';
 		}
 
 		const response = await fetch(url, init);
