@@ -1,6 +1,6 @@
 {
   "name": "@debitoor/fetcher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Node-fetch with status checks handling and parsing of json/text",
   "main": "index.js",
   "scripts": {
@@ -21,10 +21,10 @@
     "mocha-eslint": "5.0.0"
   },
   "repository": {
-      "type": "git",
-      "url": "https://github.com/debitoor/fetcher"
+    "type": "git",
+    "url": "https://github.com/debitoor/fetcher"
   },
   "bugs": {
-      "url": "https://github.com/debitoor/fetcher/issues"
+    "url": "https://github.com/debitoor/fetcher/issues"
   }
 }
