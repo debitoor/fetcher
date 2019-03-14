@@ -19,7 +19,6 @@ class Fetcher {
 			init.body = typeof body === 'object'
 				? JSON.stringify(body)
 				: body;
-			init.headers['Content-Type'] = 'appliation/json';
 			init.headers['Content-Type'] = headers['Content-Type'] || 'application/json';
 		}
 
