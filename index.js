@@ -10,17 +10,17 @@ class DefaultFetchError extends Error {
 	}
 }
 
-const DEFAULT_OPTS = {
+const DEFAULT_OPTIONS = {
 	FetchError: DefaultFetchError,
 	headers: {}
 };
 
 class Fetcher {
-	constructor(baseUrl, opts = {}) {
+	constructor(baseUrl, options = {}) {
 		this.baseUrl = baseUrl;
-		const mergedOpts = deepmerge(DEFAULT_OPTS, opts);
-		this.FetchError = mergedOpts.FetchError;
-		this.headers = mergedOpts.headers;
+		const mergedOptions = deepmerge(DEFAULT_OPTIONS, options);
+		this.FetchError = mergedOptions.FetchError;
+		this.headers = mergedOptions.headers;
 	}
 
 	async fetch({ method = 'GET', path, query = null, headers = {}, body = null }) {

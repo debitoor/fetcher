@@ -29,13 +29,13 @@ class ExampleError extends Error {
 }
 
 // create new instance
-const fetcher = new Fetcher(baseUrl, opts);
+const fetcher = new Fetcher(baseUrl, options);
 const response = await fetcher.fetch({ method:'GET' path: '/foo/bar' });
 
 // extend class
 class Example extends Fetcher {
 	constructor(baseUrl) {
-		super(baseUrl, opts);
+		super(baseUrl, options);
 	}
 
 	async requestMethod() {
@@ -46,7 +46,7 @@ class Example extends Fetcher {
 
 ### Options
 
-You can provide second optinal argument opts. Valid options:
+You can provide second optinal argument options. Valid options:
 
 * `FetchError` - an alternative to the default fetch error thrown.
 * `headers` - an object of headers.
