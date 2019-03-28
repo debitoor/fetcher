@@ -45,8 +45,7 @@ class Fetcher {
 		const validResponseStatus = validateResponseStatus(parsedResponse);
 
 		if (!validResponseStatus) {
-			const err = new this.FetchError(parsedResponse);
-			throw err;
+			throw new this.FetchError(parsedResponse);
 		}
 
 		return returnParsedResponse(parsedResponse);
