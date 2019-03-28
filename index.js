@@ -1,13 +1,28 @@
 const fetch = require('node-fetch').default;
 const formatUrl = require('url').format;
 
+class DefaultFetchError extends Error {
+	constructor(response) {
+		const message = response.statusText || response.message || 'unexpected error';
+		super(message);
+		this.response = response;
+	}
+}
+
+const DEFAULT_OPTS = {
+	FetchError: DefaultFetchError,
+	headers: {}
+};
+
 class Fetcher {
-	constructor(baseUrl, FetchError) {
+	constructor(baseUrl, opts) {
 		this.baseUrl = baseUrl;
-		this.FetchError = FetchError || DefaultFetchError;
+		const mergedOpts = { ...DEFAULT_OPTS, ...opts };
+		this.FetchError = mergedOpts.FetchError;
+		this.headers = mergedOpts.headers;
 	}
 
-	async fetch({ method = 'GET', path, query = null, headers = {}, body = null }) {
+	async fetch({ method = 'GET', path, query = null, headers = this.headers, body = null }) {
 		const url = formatUrl({
 			pathname: `${this.baseUrl}${path}`,
 			query: withoutNulls(query)
@@ -27,7 +42,8 @@ class Fetcher {
 		const validResponseStatus = validateResponseStatus(parsedResponse);
 
 		if (!validResponseStatus) {
-			throw new this.FetchError(parsedResponse);
+			const err = new this.FetchError(parsedResponse);
+			throw err;
 		}
 
 		return returnParsedResponse(parsedResponse);
@@ -84,14 +100,6 @@ function validateResponseStatus(response) {
 
 function returnParsedResponse(response) {
 	return response.parsedBody || response.parsedText || response;
-}
-
-class DefaultFetchError extends Error {
-	constructor(response) {
-		const message = response.statusText || response.message || 'unexpected error';
-		super(message);
-		this.response = response;
-	}
 }
 
 module.exports = {

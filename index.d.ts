@@ -1,5 +1,10 @@
 import { Response } from 'node-fetch';
 
+export type FetcherOpts = {
+	FetchError?: Error | any;
+	headers?: any;
+}
+
 export type FetchOpts = {
 	path: string;
 	method?: string;
@@ -8,13 +13,11 @@ export type FetchOpts = {
 	query?: any;
 };
 
-type ParsedResponse = any | Response;
+type ParsedResponse = any | Response;
 
 export class Fetcher {
-	constructor(baseUrl: string, FetchError: any | Error);
-
+	constructor(baseUrl: string, opts?: FetcherOpts);
 	baseUrl: string;
-	FetchError: Error | any;
 
 	fetch({ method, path, headers, body, query }: FetchOpts): Promise<ParsedResponse>;
 }
