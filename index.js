@@ -1,13 +1,31 @@
 const fetch = require('node-fetch').default;
 const formatUrl = require('url').format;
+const deepmerge = require('deepmerge');
+
+class DefaultFetchError extends Error {
+	constructor(response) {
+		const message = response.statusText || response.message || 'unexpected error';
+		super(message);
+		this.response = response;
+	}
+}
+
+const DEFAULT_OPTIONS = {
+	FetchError: DefaultFetchError,
+	headers: {}
+};
 
 class Fetcher {
-	constructor(baseUrl, FetchError) {
+	constructor(baseUrl, options = {}) {
 		this.baseUrl = baseUrl;
-		this.FetchError = FetchError || DefaultFetchError;
+		const mergedOptions = deepmerge(DEFAULT_OPTIONS, options);
+		this.FetchError = mergedOptions.FetchError;
+		this.headers = mergedOptions.headers;
 	}
 
 	async fetch({ method = 'GET', path, query = null, headers = {}, body = null }) {
+		headers = deepmerge(this.headers, headers);
+
 		const url = formatUrl({
 			pathname: `${this.baseUrl}${path}`,
 			query: withoutNulls(query)
@@ -84,14 +102,6 @@ function validateResponseStatus(response) {
 
 function returnParsedResponse(response) {
 	return response.parsedBody || response.parsedText || response;
-}
-
-class DefaultFetchError extends Error {
-	constructor(response) {
-		const message = response.statusText || response.message || 'unexpected error';
-		super(message);
-		this.response = response;
-	}
 }
 
 module.exports = {

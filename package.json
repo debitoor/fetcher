@@ -1,6 +1,6 @@
 {
   "name": "@debitoor/fetcher",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Node-fetch with status checks handling and parsing of json/text",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,7 @@
   "author": "Debitoor",
   "license": "ISC",
   "dependencies": {
+    "deepmerge": "3.2.0",
     "node-fetch": "2.3.0"
   },
   "devDependencies": {

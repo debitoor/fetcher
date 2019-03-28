@@ -5,6 +5,13 @@ const { expect } = require('chai');
 const PORT = 1337;
 const BASE_URL = `http://localhost:${PORT}`;
 
+class CustomFetchError extends Error {
+	constructor(response) {
+		super('Custom fetch error');
+		this.response = response;
+	}
+}
+
 describe('index', () => {
 	before('creating test http-server', (done) => {
 		http.createServer((req, res) => {
@@ -19,6 +26,10 @@ describe('index', () => {
 					break;
 				case '/303':
 					res.statusCode = 303;
+					break;
+				case '/headers':
+					res.setHeader('accept-charset', req.headers['accept-charset']);
+					res.setHeader('from', req.headers['from']);
 					break;
 				default:
 					res.write('hello world');
@@ -59,24 +70,28 @@ describe('index', () => {
 		});
 		describe('when response returns status 303 and no FetcherError provide', () => {
 			it('should throw an error and error should be an instance DefaultFetchError', async () => {
+				let actualError;
 				try {
 					await fetcher.fetch({ path: '/303' });
 				} catch (error) {
-					expect(error).to.be.an.instanceOf(DefaultFetchError);
+					actualError = error;
 				}
+				expect(actualError).to.be.an.instanceOf(DefaultFetchError);
 			});
 		});
 		describe('when response returns status 303 and custom FetcherError is provided', () => {
 			it('should throw an error and error should be an instance of CustomFetchError', async () => {
-				const fetcherWithError = new Fetcher(BASE_URL, CustomFetchError);
+				const fetcherWithError = new Fetcher(BASE_URL, { FetchError: CustomFetchError });
+
+				let actualError;
 				try {
 					await fetcherWithError.fetch({ path: '/303' });
 				} catch (error) {
-					expect(error).to.be.an.instanceOf(CustomFetchError);
+					actualError = error;
 				}
+				expect(actualError).to.be.an.instanceOf(CustomFetchError);
 			});
 		});
-
 	});
 	describe('when extending class', () => {
 		let caller;
@@ -99,11 +114,28 @@ describe('index', () => {
 			expect(actual).to.eql(expected);
 		});
 	});
-});
+	describe('when providing default headers', () => {
+		const DEFAULT_HEADERS = { 'Accept-Charset': 'fetcher-charset', 'From': 'test@fetcher.com' };
 
-class CustomFetchError extends Error {
-	constructor(response) {
-		super('Custom fetch error');
-		this.response = response;
-	}
-}
+		let fetcher;
+		before(() => {
+			fetcher = new Fetcher(BASE_URL, { headers: DEFAULT_HEADERS });
+		});
+
+		it('should request with headers', async () => {
+			const actual = await fetcher.fetch({ method: 'GET', path: '/headers' });
+
+			expect(actual.headers.get('accept-charset')).to.equal('fetcher-charset');
+			expect(actual.headers.get('from')).to.equal('test@fetcher.com');
+		});
+
+		describe('when also providing headers on fetch', () => {
+			it('should merge headers', async () => {
+				const actual = await fetcher.fetch({ method: 'GET', path: '/headers', headers: { From: 'test-overwrite@fetcher.com' } });
+
+				expect(actual.headers.get('accept-charset')).to.equal('fetcher-charset');
+				expect(actual.headers.get('from')).to.equal('test-overwrite@fetcher.com');
+			});
+		});
+	});
+});
