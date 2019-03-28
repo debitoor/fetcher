@@ -19,5 +19,5 @@ export class Fetcher {
 	constructor(baseUrl: string, opts?: FetcherOpts);
 	baseUrl: string;
 
-	fetch({ method, path, headers, body, query }: FetchOpts): Promise<ParsedResponse>;
+	fetch(opts: FetchOpts): Promise<ParsedResponse>;
 }

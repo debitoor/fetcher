@@ -1,5 +1,6 @@
 const fetch = require('node-fetch').default;
 const formatUrl = require('url').format;
+const deepmerge = require('deepmerge');
 
 class DefaultFetchError extends Error {
 	constructor(response) {
@@ -15,14 +16,16 @@ const DEFAULT_OPTS = {
 };
 
 class Fetcher {
-	constructor(baseUrl, opts) {
+	constructor(baseUrl, opts = {}) {
 		this.baseUrl = baseUrl;
-		const mergedOpts = { ...DEFAULT_OPTS, ...opts };
+		const mergedOpts = deepmerge(DEFAULT_OPTS, opts);
 		this.FetchError = mergedOpts.FetchError;
 		this.headers = mergedOpts.headers;
 	}
 
-	async fetch({ method = 'GET', path, query = null, headers = this.headers, body = null }) {
+	async fetch({ method = 'GET', path, query = null, headers = {}, body = null }) {
+		headers = deepmerge(this.headers, headers);
+
 		const url = formatUrl({
 			pathname: `${this.baseUrl}${path}`,
 			query: withoutNulls(query)

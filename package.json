@@ -9,6 +9,7 @@
   "author": "Debitoor",
   "license": "ISC",
   "dependencies": {
+    "deepmerge": "3.2.0",
     "node-fetch": "2.3.0"
   },
   "devDependencies": {

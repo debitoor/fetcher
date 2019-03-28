@@ -27,6 +27,10 @@ describe('index', () => {
 				case '/303':
 					res.statusCode = 303;
 					break;
+				case '/headers':
+					res.setHeader('accept-charset', req.headers['accept-charset']);
+					res.setHeader('from', req.headers['from']);
+					break;
 				default:
 					res.write('hello world');
 			}
@@ -88,7 +92,6 @@ describe('index', () => {
 				expect(actualError).to.be.an.instanceOf(CustomFetchError);
 			});
 		});
-
 	});
 	describe('when extending class', () => {
 		let caller;
@@ -109,6 +112,30 @@ describe('index', () => {
 			const expected = { message: 'json' };
 
 			expect(actual).to.eql(expected);
+		});
+	});
+	describe('when providing default headers', () => {
+		const DEFAULT_HEADERS = { 'Accept-Charset': 'fetcher-charset', 'From': 'test@fetcher.com' };
+
+		let fetcher;
+		before(() => {
+			fetcher = new Fetcher(BASE_URL, { headers: DEFAULT_HEADERS });
+		});
+
+		it('should request with headers', async () => {
+			const actual = await fetcher.fetch({ method: 'GET', path: '/headers' });
+
+			expect(actual.headers.get('accept-charset')).to.equal('fetcher-charset');
+			expect(actual.headers.get('from')).to.equal('test@fetcher.com');
+		});
+
+		describe('when also providing headers on fetch', () => {
+			it('should merge headers', async () => {
+				const actual = await fetcher.fetch({ method: 'GET', path: '/headers', headers: { From: 'test-overwrite@fetcher.com' } });
+
+				expect(actual.headers.get('accept-charset')).to.equal('fetcher-charset');
+				expect(actual.headers.get('from')).to.equal('test-overwrite@fetcher.com');
+			});
 		});
 	});
 });
