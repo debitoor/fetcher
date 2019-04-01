@@ -46,7 +46,7 @@ class Example extends Fetcher {
 
 ### Options
 
-You can provide second optinal argument options. Valid options:
+You can provide second optinal argument. Valid options:
 
-* `FetchError` - an alternative to the default fetch error thrown.
+* `FetchError` - an alternative to the default fetch error thrown in case of error on request or `status > 300`.
 * `headers` - an object of headers.
