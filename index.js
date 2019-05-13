@@ -23,11 +23,16 @@ class Fetcher {
 		this.headers = mergedOptions.headers;
 	}
 
-	async fetch({ method = 'GET', path, query = null, headers = {}, body = null }) {
+	async fetch({ method = 'GET', path, url, query = null, headers = {}, body = null }) {
+
+		if (!path && !url) {
+			throw new Error('No url or path provided, one is required');
+		}
+
 		headers = deepmerge(this.headers, headers);
 
-		const url = formatUrl({
-			pathname: `${this.baseUrl}${path}`,
+		const formattedUrl = formatUrl({
+			pathname: url ? url : `${this.baseUrl}${path}`,
 			query: withoutNulls(query)
 		});
 
@@ -40,7 +45,7 @@ class Fetcher {
 			init.headers['Content-Type'] = init.headers['Content-Type'] || 'application/json';
 		}
 
-		const response = await fetch(url, init);
+		const response = await fetch(formattedUrl, init);
 		const parsedResponse = await parseResponseBody(response);
 		const validResponseStatus = validateResponseStatus(parsedResponse);
 

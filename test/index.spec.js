@@ -21,6 +21,7 @@ describe('index', () => {
 					res.write(JSON.stringify({ message: 'json' }));
 					break;
 				case '/text':
+					console.log('text case');
 					res.setHeader('Content-Type', 'text/html');
 					res.write('<body><h1>Hello world</h1></body>');
 					break;
@@ -136,6 +137,16 @@ describe('index', () => {
 				expect(actual.headers.get('accept-charset')).to.equal('fetcher-charset');
 				expect(actual.headers.get('from')).to.equal('test-overwrite@fetcher.com');
 			});
+		});
+	});
+	describe('when setting baseUrl to null and using fetch with arg url', () => {
+		it('should make request with provided url property', async () => {
+			const fetcher = new Fetcher(null);
+
+			const actual = await fetcher.fetch({ method: 'GET', url: `${BASE_URL}/text` });
+			const expected = '<body><h1>Hello world</h1></body>';
+
+			expect(actual).to.equal(expected);
 		});
 	});
 });

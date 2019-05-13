@@ -6,7 +6,8 @@ export type FetcherOptions = {
 }
 
 export type FetchOptions = {
-	path: string;
+	path?: string;
+	url?: string;
 	method?: string;
 	headers?: any;
 	body?: any;
