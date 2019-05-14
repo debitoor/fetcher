@@ -45,7 +45,7 @@ class Fetcher {
 		});
 
 		if (!requestUrl) {
-			throw new Error('');
+			throw new Error('Failed to generate a request url based on provided args');
 		}
 
 		const response = await fetch(requestUrl, init);
