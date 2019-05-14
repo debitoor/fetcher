@@ -23,11 +23,20 @@ class Fetcher {
 		this.headers = mergedOptions.headers;
 	}
 
-	async fetch({ method = 'GET', path, query = null, headers = {}, body = null }) {
+	async fetch(fetchOptionsOrMethod, path, body, query, headers = {}) {
 
-		if (headers) {
-			headers = deepmerge(this.headers, headers);
+		let method;
+		if (typeof fetchOptionsOrMethod === 'object') {
+			method = fetchOptionsOrMethod.method;
+			path = fetchOptionsOrMethod.path;
+			body = fetchOptionsOrMethod.body;
+			query = fetchOptionsOrMethod.query;
+			headers = fetchOptionsOrMethod.headers || headers;
+		} else {
+			method = fetchOptionsOrMethod;
 		}
+
+		headers = deepmerge(this.headers, headers);
 
 		const init = { method, headers };
 
@@ -39,7 +48,7 @@ class Fetcher {
 		}
 
 		const requestUrl = url.format({
-			...withoutNulls(url.parse(this.baseUrl || '')),
+			...withoutNulls(url.parse(this.baseUrl || '')),
 			...withoutNulls(url.parse(path)),
 			query: withoutNulls(query)
 		});

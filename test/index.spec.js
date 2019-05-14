@@ -148,4 +148,14 @@ describe('index', () => {
 			expect(actual).to.equal(expected);
 		});
 	});
+	describe('when requesting with direct arugments instead of fetch options object', () => {
+		it('should call with success', async () => {
+			const fetcher = new Fetcher(BASE_URL);
+
+			const actual = await fetcher.fetch('GET', '/json');
+			const expected = { message: 'json' };
+
+			expect(actual).to.eql(expected);
+		});
+	});
 });
