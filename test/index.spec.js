@@ -140,7 +140,7 @@ describe('index', () => {
 	});
 	describe('when setting baseUrl to null and using fetch with arg url', () => {
 		it('should make request with provided url property', async () => {
-			const fetcher = new Fetcher(null);
+			const fetcher = new Fetcher();
 
 			const actual = await fetcher.fetch({ method: 'GET', path: `${BASE_URL}/text` });
 			const expected = '<body><h1>Hello world</h1></body>';

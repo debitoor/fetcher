@@ -38,9 +38,8 @@ class Fetcher {
 			init.headers['Content-Type'] = init.headers['Content-Type'] || 'application/json';
 		}
 
-		const parsedBaseUrl = this.baseUrl && url.parse(this.baseUrl);
 		const requestUrl = url.format({
-			...withoutNulls(parsedBaseUrl),
+			...withoutNulls(url.parse(this.baseUrl || '')),
 			...withoutNulls(url.parse(path)),
 			query: withoutNulls(query)
 		});

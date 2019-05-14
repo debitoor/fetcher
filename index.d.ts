@@ -17,6 +17,6 @@ export type FetchOptions = {
 type ParsedResponse = any | Response;
 
 export class Fetcher {
-	constructor(baseUrl: string, options?: FetcherOptions);
+	constructor(baseUrl?: string, options?: FetcherOptions);
 	fetch(options: FetchOptions): Promise<ParsedResponse>;
 }
