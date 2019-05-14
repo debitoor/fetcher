@@ -1,17 +1,38 @@
 const fetch = require('node-fetch').default;
 const url = require('url');
 const deepmerge = require('deepmerge');
+const path = require('path');
 
-class DefaultFetchError extends Error {
+class FetchError extends Error {
 	constructor(response) {
-		const message = response.statusText || response.message || 'unexpected error';
-		super(message);
+		const { parsedBody, parsedText, status, statusText, code, message } = response;
+		const errorMessage = statusText || message || 'unexpected error';
+		super(errorMessage);
 		this.response = response;
+
+		if (status) {
+			this.status = status;
+		}
+
+		if (statusText) {
+			this.statusText = statusText;
+		}
+
+		if (code) {
+			this.code = code;
+		}
+
+		if (parsedBody) {
+			this.parsedBody = parsedBody;
+		}
+
+		if (parsedText) {
+			this.parsedText = parsedText;
+		}
 	}
 }
 
 const DEFAULT_OPTIONS = {
-	FetchError: DefaultFetchError,
 	headers: {}
 };
 
@@ -19,11 +40,10 @@ class Fetcher {
 	constructor(baseUrl, options = {}) {
 		this.baseUrl = baseUrl;
 		const mergedOptions = deepmerge(DEFAULT_OPTIONS, options);
-		this.FetchError = mergedOptions.FetchError;
 		this.headers = mergedOptions.headers;
 	}
 
-	async fetch(fetchOptionsOrMethod, path, body, query, headers = {}) {
+	async fetch(fetchOptionsOrMethod, path, query, headers = {}, body, ) {
 
 		let method;
 		if (typeof fetchOptionsOrMethod === 'object') {
@@ -47,11 +67,7 @@ class Fetcher {
 			init.headers['Content-Type'] = init.headers['Content-Type'] || 'application/json';
 		}
 
-		const requestUrl = url.format({
-			...withoutNulls(url.parse(this.baseUrl || '')),
-			...withoutNulls(url.parse(path)),
-			query: withoutNulls(query)
-		});
+		const requestUrl = mergeUrls(this.baseUrl, path, query);
 
 		if (!requestUrl) {
 			throw new Error('Failed to generate a request url based on provided args');
@@ -62,7 +78,7 @@ class Fetcher {
 		const validResponseStatus = validateResponseStatus(parsedResponse);
 
 		if (!validResponseStatus) {
-			throw new this.FetchError(parsedResponse);
+			throw new FetchError(parsedResponse);
 		}
 
 		return returnParsedResponse(parsedResponse);
@@ -121,7 +137,38 @@ function returnParsedResponse(response) {
 	return response.parsedBody || response.parsedText || response;
 }
 
+function mergeUrls(baseUrl, requestUrl, query = {}) {
+	if (typeof baseUrl === 'string') {
+		baseUrl = url.parse(baseUrl, true);
+	}
+
+	if (typeof requestUrl === 'string') {
+		requestUrl = url.parse(requestUrl, true);
+	}
+
+	baseUrl = withoutNulls(baseUrl);
+	requestUrl = withoutNulls(requestUrl);
+
+	if (!baseUrl) {
+		baseUrl = {};
+	}
+
+	const mergedUrl = {
+		protocol: baseUrl.protocol || requestUrl.protocol,
+		host: baseUrl.host || requestUrl.host,
+		pathname: path.resolve(baseUrl.pathname, requestUrl.pathname),
+		query: withoutNulls({
+			...baseUrl.query,
+			...requestUrl.query,
+			...query
+		})
+	};
+
+	return url.format(mergedUrl);
+}
+
 module.exports = {
 	Fetcher,
-	DefaultFetchError
+	FetchError,
+	mergeUrls
 };
