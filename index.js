@@ -1,5 +1,5 @@
 const fetch = require('node-fetch').default;
-const formatUrl = require('url').format;
+const url = require('url');
 const deepmerge = require('deepmerge');
 
 class DefaultFetchError extends Error {
@@ -23,18 +23,11 @@ class Fetcher {
 		this.headers = mergedOptions.headers;
 	}
 
-	async fetch({ method = 'GET', path, url, query = null, headers = {}, body = null }) {
+	async fetch({ method = 'GET', path, query = null, headers = {}, body = null }) {
 
-		if (!path && !url) {
-			throw new Error('No url or path provided, one is required');
+		if (headers) {
+			headers = deepmerge(this.headers, headers);
 		}
-
-		headers = deepmerge(this.headers, headers);
-
-		const formattedUrl = formatUrl({
-			pathname: url ? url : `${this.baseUrl}${path}`,
-			query: withoutNulls(query)
-		});
 
 		const init = { method, headers };
 
@@ -45,7 +38,18 @@ class Fetcher {
 			init.headers['Content-Type'] = init.headers['Content-Type'] || 'application/json';
 		}
 
-		const response = await fetch(formattedUrl, init);
+		const parsedBaseUrl = this.baseUrl && url.parse(this.baseUrl);
+		const requestUrl = url.format({
+			...withoutNulls(parsedBaseUrl),
+			...withoutNulls(url.parse(path)),
+			query: withoutNulls(query)
+		});
+
+		if (!requestUrl) {
+			throw new Error('');
+		}
+
+		const response = await fetch(requestUrl, init);
 		const parsedResponse = await parseResponseBody(response);
 		const validResponseStatus = validateResponseStatus(parsedResponse);
 
