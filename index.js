@@ -23,7 +23,7 @@ class Fetcher {
 		this.headers = mergedOptions.headers;
 	}
 
-	async fetch(fetchOptionsOrMethod, path, query, headers = {}, body, ) {
+	async fetch(fetchOptionsOrMethod, path, query, headers = {}, body) {
 
 		let method;
 		switch (typeof fetchOptionsOrMethod) {
@@ -135,7 +135,7 @@ function mergeUrls(baseUrl, requestUrl, query = {}) {
 	const mergedUrl = {
 		protocol: baseUrl.protocol || requestUrl.protocol,
 		host: baseUrl.host || requestUrl.host,
-		pathname: url.resolve((baseUrl.pathname || ''), requestUrl.pathname),
+		pathname: url.resolve((baseUrl.pathname || ''), requestUrl.pathname),
 		query: withoutNulls({
 			...baseUrl.query,
 			...requestUrl.query,
