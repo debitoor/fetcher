@@ -1,7 +1,6 @@
 const fetch = require('node-fetch').default;
 const url = require('url');
 const deepmerge = require('deepmerge');
-const path = require('path');
 
 class FetchError extends Error {
 	constructor(response) {
@@ -136,7 +135,7 @@ function mergeUrls(baseUrl, requestUrl, query = {}) {
 	const mergedUrl = {
 		protocol: baseUrl.protocol || requestUrl.protocol,
 		host: baseUrl.host || requestUrl.host,
-		pathname: path.resolve(baseUrl.pathname, requestUrl.pathname),
+		pathname: url.resolve((baseUrl.pathname || ''), requestUrl.pathname),
 		query: withoutNulls({
 			...baseUrl.query,
 			...requestUrl.query,
