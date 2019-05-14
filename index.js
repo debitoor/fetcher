@@ -1,6 +1,5 @@
 const fetch = require('node-fetch').default;
 const url = require('url');
-const deepmerge = require('deepmerge');
 
 class FetchError extends Error {
 	constructor(response) {
@@ -18,7 +17,10 @@ const DEFAULT_OPTIONS = {
 class Fetcher {
 	constructor(baseUrl, options = {}) {
 		this.baseUrl = baseUrl;
-		const mergedOptions = deepmerge(DEFAULT_OPTIONS, options);
+		const mergedOptions = {
+			...DEFAULT_OPTIONS,
+			...options
+		};
 		this.headers = mergedOptions.headers;
 	}
 
@@ -38,7 +40,10 @@ class Fetcher {
 				break;
 		}
 
-		headers = deepmerge(this.headers, headers);
+		headers = {
+			...this.headers,
+			...headers
+		};
 
 		const init = { method, headers };
 
