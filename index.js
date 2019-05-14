@@ -5,30 +5,11 @@ const path = require('path');
 
 class FetchError extends Error {
 	constructor(response) {
-		const { parsedBody, parsedText, status, statusText, code, message } = response;
+		const { statusText, message } = response;
 		const errorMessage = statusText || message || 'unexpected error';
 		super(errorMessage);
 		this.response = response;
 
-		if (status) {
-			this.status = status;
-		}
-
-		if (statusText) {
-			this.statusText = statusText;
-		}
-
-		if (code) {
-			this.code = code;
-		}
-
-		if (parsedBody) {
-			this.parsedBody = parsedBody;
-		}
-
-		if (parsedText) {
-			this.parsedText = parsedText;
-		}
 	}
 }
 
@@ -46,14 +27,17 @@ class Fetcher {
 	async fetch(fetchOptionsOrMethod, path, query, headers = {}, body, ) {
 
 		let method;
-		if (typeof fetchOptionsOrMethod === 'object') {
-			method = fetchOptionsOrMethod.method;
-			path = fetchOptionsOrMethod.path;
-			body = fetchOptionsOrMethod.body;
-			query = fetchOptionsOrMethod.query;
-			headers = fetchOptionsOrMethod.headers || headers;
-		} else {
-			method = fetchOptionsOrMethod;
+		switch (typeof fetchOptionsOrMethod) {
+			case 'object':
+				method = fetchOptionsOrMethod.method;
+				path = fetchOptionsOrMethod.path;
+				body = fetchOptionsOrMethod.body;
+				query = fetchOptionsOrMethod.query;
+				headers = fetchOptionsOrMethod.headers || headers;
+				break;
+			case 'string':
+				method = fetchOptionsOrMethod;
+				break;
 		}
 
 		headers = deepmerge(this.headers, headers);
@@ -146,12 +130,8 @@ function mergeUrls(baseUrl, requestUrl, query = {}) {
 		requestUrl = url.parse(requestUrl, true);
 	}
 
-	baseUrl = withoutNulls(baseUrl);
+	baseUrl = withoutNulls(baseUrl) || {}; // avoid TypeError getting props of baseUrl
 	requestUrl = withoutNulls(requestUrl);
-
-	if (!baseUrl) {
-		baseUrl = {};
-	}
 
 	const mergedUrl = {
 		protocol: baseUrl.protocol || requestUrl.protocol,
