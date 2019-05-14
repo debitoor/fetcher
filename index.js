@@ -8,7 +8,6 @@ class FetchError extends Error {
 		const errorMessage = statusText || message || 'unexpected error';
 		super(errorMessage);
 		this.response = response;
-
 	}
 }
 
