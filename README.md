@@ -2,7 +2,7 @@
 
 # Fetcher
 
-An extended node-fetch module that helps you avoid repeating response status checks, but instead delivers what you are usually interested in - the response.
+Easily make make HTTP using `node-fetch` and have response status check, json-body- and text parsing and error handling.
 
 If response is of `"content-type": "application/json"` it will return the response of `await response.json();`.
 
@@ -10,27 +10,21 @@ If response is of `"content-type": "text/` it will return the response of `await
 
 If response is not of either type, it will just return the response as is.
 
-The Fetcher takes a `baseUrl` and an optional `FetchError`. If the optional `FetchError` is not provided, it will instead use a default `DefaultFetchError` in case of request errors.
+The Fetcher takes an optional `baseUrl` and an optional `options`.
 
-It will throw either the provided `FetchError` or `DefaultFetchError` if `response.status` is not equal to 200 or less than 300 (`response.status >= 200 && response.status < 300`).
+It will throw an error if `response.status` is not equal to 200 or less than 300 (`response.status >= 200 && response.status < 300`).
+
+`fetcher.fetch` function can be called with an object of options or direct function arguments. See examples.
 
 ## examples
 
-_Note_ how **Both** examples provides `ExampleError` for optional param `FetchError`:
-
 ```javascript
-
-// example error
-class ExampleError extends Error {
-	constructor(response) {
-		super(response.statusText);
-		this.response = response;
-	}
-}
 
 // create new instance
 const fetcher = new Fetcher(baseUrl, options);
 const response = await fetcher.fetch({ method:'GET' path: '/foo/bar' });
+// OR 
+const response = await fetcher.fetch(method, path, query, headers, body)
 
 // extend class
 class Example extends Fetcher {
@@ -46,7 +40,6 @@ class Example extends Fetcher {
 
 ### Options
 
-You can provide second optinal argument options. Valid options:
+You can provide second optional argument options. Valid options:
 
-* `FetchError` - an alternative to the default fetch error thrown.
 * `headers` - an object of headers.
