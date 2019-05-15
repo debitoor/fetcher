@@ -40,6 +40,10 @@ class Fetcher {
 				break;
 		}
 
+		if (!path) {
+			throw new Error('new request url/path provided');
+		}
+
 		headers = {
 			...this.headers,
 			...headers
