@@ -1,35 +1,53 @@
 const fetch = require('node-fetch').default;
-const formatUrl = require('url').format;
-const deepmerge = require('deepmerge');
+const url = require('url');
 
-class DefaultFetchError extends Error {
+class FetchError extends Error {
 	constructor(response) {
-		const message = response.statusText || response.message || 'unexpected error';
-		super(message);
+		const { statusText, message } = response;
+		const errorMessage = statusText || message || 'unexpected error';
+		super(errorMessage);
 		this.response = response;
 	}
 }
 
 const DEFAULT_OPTIONS = {
-	FetchError: DefaultFetchError,
 	headers: {}
 };
 
 class Fetcher {
 	constructor(baseUrl, options = {}) {
 		this.baseUrl = baseUrl;
-		const mergedOptions = deepmerge(DEFAULT_OPTIONS, options);
-		this.FetchError = mergedOptions.FetchError;
+		const mergedOptions = {
+			...DEFAULT_OPTIONS,
+			...options
+		};
 		this.headers = mergedOptions.headers;
 	}
 
-	async fetch({ method = 'GET', path, query = null, headers = {}, body = null }) {
-		headers = deepmerge(this.headers, headers);
+	async fetch(fetchOptionsOrMethod, path, query, headers = {}, body) {
 
-		const url = formatUrl({
-			pathname: `${this.baseUrl}${path}`,
-			query: withoutNulls(query)
-		});
+		let method;
+		switch (typeof fetchOptionsOrMethod) {
+			case 'object':
+				method = fetchOptionsOrMethod.method;
+				path = fetchOptionsOrMethod.path;
+				body = fetchOptionsOrMethod.body;
+				query = fetchOptionsOrMethod.query;
+				headers = fetchOptionsOrMethod.headers || headers;
+				break;
+			case 'string':
+				method = fetchOptionsOrMethod;
+				break;
+		}
+
+		if (!path) {
+			throw new Error('new request url/path provided');
+		}
+
+		headers = {
+			...this.headers,
+			...headers
+		};
 
 		const init = { method, headers };
 
@@ -40,12 +58,18 @@ class Fetcher {
 			init.headers['Content-Type'] = init.headers['Content-Type'] || 'application/json';
 		}
 
-		const response = await fetch(url, init);
+		const requestUrl = mergeUrls(this.baseUrl, path, query);
+
+		if (!requestUrl) {
+			throw new Error('Failed to generate a request url based on provided args');
+		}
+
+		const response = await fetch(requestUrl, init);
 		const parsedResponse = await parseResponseBody(response);
 		const validResponseStatus = validateResponseStatus(parsedResponse);
 
 		if (!validResponseStatus) {
-			throw new this.FetchError(parsedResponse);
+			throw new FetchError(parsedResponse);
 		}
 
 		return returnParsedResponse(parsedResponse);
@@ -104,7 +128,34 @@ function returnParsedResponse(response) {
 	return response.parsedBody || response.parsedText || response;
 }
 
+function mergeUrls(baseUrl, requestUrl, query = {}) {
+	if (typeof baseUrl === 'string') {
+		baseUrl = url.parse(baseUrl, true);
+	}
+
+	if (typeof requestUrl === 'string') {
+		requestUrl = url.parse(requestUrl, true);
+	}
+
+	baseUrl = withoutNulls(baseUrl) || {}; // avoid TypeError getting props of baseUrl
+	requestUrl = withoutNulls(requestUrl);
+
+	const mergedUrl = {
+		protocol: baseUrl.protocol || requestUrl.protocol,
+		host: baseUrl.host || requestUrl.host,
+		pathname: url.resolve((baseUrl.pathname || ''), requestUrl.pathname),
+		query: withoutNulls({
+			...baseUrl.query,
+			...requestUrl.query,
+			...query
+		})
+	};
+
+	return url.format(mergedUrl);
+}
+
 module.exports = {
 	Fetcher,
-	DefaultFetchError
+	FetchError,
+	mergeUrls
 };

@@ -1,16 +1,9 @@
-const { Fetcher, DefaultFetchError } = require('../index');
+const { Fetcher, FetchError, mergeUrls } = require('../index');
 const http = require('http');
 const { expect } = require('chai');
 
 const PORT = 1337;
 const BASE_URL = `http://localhost:${PORT}`;
-
-class CustomFetchError extends Error {
-	constructor(response) {
-		super('Custom fetch error');
-		this.response = response;
-	}
-}
 
 describe('index', () => {
 	before('creating test http-server', (done) => {
@@ -69,27 +62,14 @@ describe('index', () => {
 			});
 		});
 		describe('when response returns status 303 and no FetcherError provide', () => {
-			it('should throw an error and error should be an instance DefaultFetchError', async () => {
+			it('should throw an error and error should be an instance FetchError', async () => {
 				let actualError;
 				try {
 					await fetcher.fetch({ path: '/303' });
 				} catch (error) {
 					actualError = error;
 				}
-				expect(actualError).to.be.an.instanceOf(DefaultFetchError);
-			});
-		});
-		describe('when response returns status 303 and custom FetcherError is provided', () => {
-			it('should throw an error and error should be an instance of CustomFetchError', async () => {
-				const fetcherWithError = new Fetcher(BASE_URL, { FetchError: CustomFetchError });
-
-				let actualError;
-				try {
-					await fetcherWithError.fetch({ path: '/303' });
-				} catch (error) {
-					actualError = error;
-				}
-				expect(actualError).to.be.an.instanceOf(CustomFetchError);
+				expect(actualError).to.be.an.instanceOf(FetchError);
 			});
 		});
 	});
@@ -135,6 +115,60 @@ describe('index', () => {
 
 				expect(actual.headers.get('accept-charset')).to.equal('fetcher-charset');
 				expect(actual.headers.get('from')).to.equal('test-overwrite@fetcher.com');
+			});
+		});
+	});
+	describe('when setting baseUrl to null and using fetch with arg url', () => {
+		it('should make request with provided url property', async () => {
+			const fetcher = new Fetcher();
+
+			const actual = await fetcher.fetch({ method: 'GET', path: `${BASE_URL}/text` });
+			const expected = '<body><h1>Hello world</h1></body>';
+
+			expect(actual).to.equal(expected);
+		});
+	});
+	describe('when requesting with direct arugments instead of fetch options object', () => {
+		it('should call with success', async () => {
+			const fetcher = new Fetcher(BASE_URL);
+
+			const actual = await fetcher.fetch('GET', '/json');
+			const expected = { message: 'json' };
+
+			expect(actual).to.eql(expected);
+		});
+	});
+	describe('mergeUrls()', () => {
+		describe('when baseUrl is host and requestUrl is a path', () => {
+			it('should return merged url', () => {
+				const actual = mergeUrls('https://debitoor.com', '/about');
+				const expected = 'https://debitoor.com/about';
+
+				expect(actual).to.eql(expected);
+			});
+		});
+		describe('when baseUrl is host and requestUrl is a full url', () => {
+			it('should return request url', () => {
+				const actual = mergeUrls(null, 'https://foo.debitoor.com/about/bar');
+				const expected = 'https://foo.debitoor.com/about/bar';
+
+				expect(actual).to.eql(expected);
+			});
+		});
+		describe('when baseUrl is host and includes a query string and requestUrl is a path', () => {
+			it('should return merged url with query string from baseUrl', () => {
+				const actual = mergeUrls('https://debitoor.com?token=abc123', '/foo/bar');
+				const expected = 'https://debitoor.com/foo/bar?token=abc123';
+
+				expect(actual).to.eql(expected);
+			});
+		});
+		describe('when baseUrl is host and includes a query string and requestUrl is a path that includes query string', () => {
+			it('should return request url', () => {
+				const actual = mergeUrls('https://debitoor.com?token=abc123', '/foo/bar?sort=true');
+				const expected = 'https://debitoor.com/foo/bar?token=abc123&sort=true';
+
+				expect(actual).to.eql(expected);
 			});
 		});
 	});
