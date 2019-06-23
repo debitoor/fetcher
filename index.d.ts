@@ -20,5 +20,5 @@ type ParsedResponse = any | Response;
 
 export class Fetcher {
 	constructor(baseUrl?: Url, options?: FetcherOptions);
-	fetch(fetchOptionsOrMethod: FetchOptions | string, path?: string, body?: any, query?: any, headers?: any): Promise<ParsedResponse>;
+	fetch(fetchOptionsOrMethod: FetchOptions | string, path?: string, query?: any, headers?: any, body?: any): Promise<ParsedResponse>;
 }
