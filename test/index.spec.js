@@ -1,4 +1,5 @@
-const { Fetcher, FetchError, mergeUrls } = require('../index');
+const Fetcher = require('../lib/index');
+const { mergeUrls, FetchError } = require('../lib/helpers');
 const http = require('http');
 const { expect } = require('chai');
 
