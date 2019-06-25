@@ -19,12 +19,13 @@ It will throw an error if `response.status` is not equal to 200 or less than 300
 ## examples
 
 ```javascript
+const Fetcher = require('@debitoor/fetcher');
 
 // create new instance
 const fetcher = new Fetcher(baseUrl, options);
 const response = await fetcher.fetch({ method:'GET' path: '/foo/bar' });
 // OR
-const response = await fetcher.fetch(method, path, query, headers, body)
+const response = await fetcher.fetch(method, path, query, headers, body);
 
 // extend class
 class Example extends Fetcher {
