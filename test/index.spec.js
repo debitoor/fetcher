@@ -70,6 +70,7 @@ describe('index', () => {
 				} catch (error) {
 					actualError = error;
 				}
+				console.log('Fetch error', FetchError);
 				expect(actualError).to.be.an.instanceOf(FetchError);
 			});
 		});
