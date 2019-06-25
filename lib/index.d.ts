@@ -1,4 +1,3 @@
-// Type definitions for [@debitoor/fetcher]
 import { Response } from 'node-fetch';
 import { UrlWithParsedQuery, UrlWithStringQuery } from 'url';
 
