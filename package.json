@@ -2,12 +2,12 @@
   "name": "@debitoor/fetcher",
   "version": "2.1.0",
   "description": "Node-fetch with status checks handling and parsing of json/text",
-  "main": "index.js",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "test": "mocha",
     "preversion": "npm test",
-	"postversion": "git push && git push --tags",
-	"dtslint": "dtslint test/types"
+    "postversion": "git push && git push --tags"
   },
   "author": "Debitoor",
   "license": "ISC",
@@ -17,9 +17,8 @@
   "devDependencies": {
     "@debitoor/eslint-config-debitoor": "3.0.1",
     "@debitoor/mocha-strict-dependencies": "1.1.0",
-    "@types/mocha": "5.2.6",
     "@types/node": "11.10.5",
-    "dtslint": "^0.8.0",
+    "@types/node-fetch": "2.3.7",
     "eslint": "5.15.0",
     "mocha": "6.1.4",
     "mocha-eslint": "5.0.0"
