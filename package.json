@@ -18,6 +18,7 @@
     "@debitoor/eslint-config-debitoor": "3.0.1",
     "@debitoor/mocha-strict-dependencies": "1.1.0",
     "@types/node": "11.10.5",
+    "debug": "4.1.1",
     "eslint": "5.15.0",
     "mocha": "6.1.4",
     "mocha-eslint": "5.0.0"
