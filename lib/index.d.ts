@@ -1,4 +1,4 @@
-import { Response } from 'node-fetch';
+import { Response, RequestRedirect } from 'node-fetch';
 import { UrlWithParsedQuery, UrlWithStringQuery } from 'url';
 
 type Url = string | UrlWithParsedQuery | UrlWithStringQuery;
@@ -9,7 +9,7 @@ export =  Fetcher;
 
 declare class Fetcher {
 	constructor(baseUrl?: Url, options?: Fetcher.FetcherOptions);
-	fetch(fetchOptionsOrMethod: Fetcher.FetchOptions | string, path?: string, query?: any, headers?: any, body?: any): Promise<ParsedResponse>;
+	fetch(fetchOptionsOrMethod: Fetcher.FetchOptions | string, path?: string, query?: any, headers?: any, body?: any, redirect?: RequestRedirect): Promise<ParsedResponse>;
 }
 
 declare namespace Fetcher {
@@ -20,6 +20,7 @@ declare namespace Fetcher {
 		headers?: any;
 		body?: any;
 		query?: any;
+		redirect: RequestRedirect;
 	}
 
 	export type FetcherOptions = {
