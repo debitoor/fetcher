@@ -37,8 +37,8 @@ describe('helpers', () => {
 			});
 		});
 		describe('when baseUrl includes a path', () => {
-			it('should return request url with the path of baseUrl kept', () => {
-				const actual = mergeUrls('https://circleci.com/api/v1.1', '/projects?circle-token=token');
+			it('should return request url with the path of baseUrl kept when formatted properly', () => {
+				const actual = mergeUrls('https://circleci.com/api/v1.1/', 'projects?circle-token=token');
 				const expected = 'https://circleci.com/api/v1.1/projects?circle-token=token';
 
 				expect(actual).to.equal(expected);

@@ -44,3 +44,23 @@ class Example extends Fetcher {
 You can provide second optional argument options. Valid options:
 
 * `headers` - an object of headers.
+
+## baseUrl and path
+
+It is possible to supply a `baseUrl` when initialising `fetcher` while also supplying a `path` when calling the `fetch` function.
+
+When both are applied, we are merging them. The path of the merged url is being resolved using `url.resolve`, thus it is important to note how this works.
+
+E.g. if `baseUrl` includes any path that should be kept in the merged url, it should end with a `/` while the `path` should not begin with one (which it usually should). See example below.
+
+```js
+const url = require('url');
+
+const baseurl = 'https://circleci.com/api/v1.1/';
+const requesturl = 'projects?circle-token=token';
+
+console.log(url.resolve('https://circleci.com/api/v1.1/', 'projects?circle-token=token'));
+// https://circleci.com/api/v1.1/projects?circle-token=token
+console.log(url.resolve('https://circleci.com/api/v1.1', '/projects?circle-token=token'));
+// https://circleci.com/projects?circle-token=token
+```
