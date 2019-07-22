@@ -20,7 +20,7 @@ declare namespace Fetcher {
 		headers?: any;
 		body?: any;
 		query?: any;
-		redirect: RequestRedirect;
+		redirect?: RequestRedirect;
 	}
 
 	export type FetcherOptions = {
