@@ -1,6 +1,6 @@
 {
   "name": "@debitoor/fetcher",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "Node-fetch with status checks handling and parsing of json/text",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
