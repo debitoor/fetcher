@@ -12,7 +12,7 @@
   "author": "Debitoor",
   "license": "ISC",
   "dependencies": {
-    "node-fetch": "2.3.0",
+    "node-fetch": "2.6.1",
     "debug": "4.1.1"
   },
   "devDependencies": {
