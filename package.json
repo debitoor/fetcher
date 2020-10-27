@@ -20,7 +20,7 @@
     "@debitoor/mocha-strict-dependencies": "1.1.0",
     "@types/node": "11.10.5",
     "eslint": "5.15.0",
-    "mocha": "8.2.0",
+    "mocha": "6.2.2",
     "mocha-eslint": "5.0.0"
   },
   "repository": {
