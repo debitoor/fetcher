@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/debitoor/fetcher/tree/master.svg?style=svg)](https://circleci.com/gh/debitoor/fetcher/tree/master)
+**ARCHIVED!!!** This package is now archived, as there are many other better alternatives that do not require ourself to maintain.
 
 # Fetcher
 
